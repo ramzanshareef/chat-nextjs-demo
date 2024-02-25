@@ -88,3 +88,14 @@ export async function userLogin(currentState, formData) {
 
     }
 }
+
+export async function userLogout() {
+    cookies().set("userToken", "", {
+        path: "/",
+        maxAge: 0,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+    });
+    return { status: 200, message: "Logged out successfully" };
+}
