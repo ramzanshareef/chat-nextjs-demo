@@ -4,22 +4,7 @@ import { sendMessage } from "@/actions/user/chat";
 import PropTypes from "prop-types";
 
 
-const ChatBox = ({ userID, logUser, messages, chatID }) => {
-    messages = [
-        {
-            sender: "65dae4a8768038619ffa6d8d",
-            message: "Hello"
-        },
-        {
-            sender: "65db12648547ccb453a411f0",
-            message: "How are you?"
-        },
-        {
-            sender: "65dae4a8768038619ffa6d8d",
-            message: "I am fine"
-        },
-    ];
-
+const ChatBox = ({ logUser, messages, chatID }) => {
     const sendMsg = async (e) => {
         e.preventDefault();
         let mes = {
@@ -34,6 +19,12 @@ const ChatBox = ({ userID, logUser, messages, chatID }) => {
         <>
             <div className="chat-box w-full">
                 <div className="messages h-[90vh] p-6">
+                    {
+                        messages.length === 0 &&
+                        <div className="text-center">
+                            <h1 className="text-2xl font-bold">No messages yet</h1>
+                        </div>
+                    }
                     {messages?.map((message, index) => {
                         return (
                             <div key={index} className="message p-2 mb-2">
@@ -65,8 +56,7 @@ const ChatBox = ({ userID, logUser, messages, chatID }) => {
 export default ChatBox;
 
 ChatBox.propTypes = {
-    userID: PropTypes.string.isRequired,
-    messages: PropTypes.array.isRequired,
-    logUser: PropTypes.string.isRequired,
-    chatID: PropTypes.string.isRequired
+    messages: PropTypes.array,
+    logUser: PropTypes.string,
+    chatID: PropTypes.string
 };
