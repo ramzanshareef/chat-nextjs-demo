@@ -1,35 +1,42 @@
 "use client";
 
-import { sendMessage } from "@/actions/user/chat";
+import { sendMessageForm } from "@/actions/user/chat";
+import { useRouter } from "next/navigation";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
+import { useFormState } from "react-dom";
 
 
-const ChatBox = ({ logUser, messages, chatID }) => {
-    const sendMsg = async (e) => {
-        e.preventDefault();
-        let mes = {
-            sender: logUser,
-            message: e.target.message.value
-        };
-        let res = await sendMessage(chatID, mes);
-        console.log(res);
-    };
+const ChatBox = (props) => {
+    const [state, sendMsg] = useFormState(sendMessageForm, null);
+    const router = useRouter();
+    useEffect(() => {
+        if (state?.status) {
+            if (state.status === 200) {
+                document.getElementById("msgSend").reset();
+                router.push("/chat/" + props.chatID)
+            }
+            else {
+                alert(state.message);
+            }
+        }
+    }, [state])
 
     return (
         <>
             <div className="chat-box w-full">
                 <div className="messages h-[90vh] p-6">
                     {
-                        messages.length === 0 &&
+                        props.messages?.messages.length === 0 &&
                         <div className="text-center">
                             <h1 className="text-2xl font-bold">No messages yet</h1>
                         </div>
                     }
-                    {messages?.map((message, index) => {
+                    {props.messages?.messages?.map((message, index) => {
                         return (
-                            <div key={index} className="message p-2 mb-2">
-                                <div className={`w-fit p-2 rounded-full ${message.sender === logUser ? "bg-blue-500 text-white rounded-br-none float-right" : "bg-gray-300 text-black rounded-bl-none"}`}>
-                                    {message.message}
+                            <div key={index} className={message.sender === props.logUser ? "text-right" : "text-left"}>
+                                <div className="message-box inline-block bg-blue-500 p-2 my-2 rounded-lg">
+                                    <p>{message.message}</p>
                                 </div>
                             </div>
                         );
@@ -37,13 +44,18 @@ const ChatBox = ({ logUser, messages, chatID }) => {
 
                 </div>
 
-                <div id="msgSend" className="p-2">
-                    <form onSubmit={sendMsg}>
-                        <input type="text" name="message" id=""
+                <div className="p-2">
+                    <form action={sendMsg} id="msgSend">
+                        <input type="text" name="msg"
                             className="w-11/12 h-10 border-2 border-gray-300 rounded-lg px-2 "
                             placeholder="Type your message here"
                         />
-                        <button className="w-1/12 px-2 py-1 h-10 bg-blue-500 text-white rounded-lg">Send</button>
+                        <input type="hidden" name="chatID"
+                            value={props.chatID}
+                        />
+                        <button
+                            type="submit"
+                            className="w-1/12 px-2 py-1 h-10 bg-blue-500 text-white rounded-lg">Send</button>
                     </form>
                 </div>
             </div>
@@ -54,9 +66,3 @@ const ChatBox = ({ logUser, messages, chatID }) => {
 };
 
 export default ChatBox;
-
-ChatBox.propTypes = {
-    messages: PropTypes.array,
-    logUser: PropTypes.string,
-    chatID: PropTypes.string
-};

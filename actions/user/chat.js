@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import connectDB from "../connectDB";
 import Chat from "@/models/Chat";
+import { revalidatePath } from "next/cache";
 
 const jwt = require("jsonwebtoken");
 const jwt_secret = process.env.JWT_SECRET;
@@ -26,9 +27,12 @@ export const fetchChat = async (recieverID) => {
             exisChat = await Chat.create({
                 users: [senderID, recieverID]
             });
+
         }
-        let messages = exisChat.messages || [];
-        return { status: 200, chatID: exisChat._id, messages: messages, senderID: senderID };
+        let messages = await Chat.findById(exisChat.id).select("messages");
+        let chatID = await exisChat.id;
+        revalidatePath(`/chat/${chatID}`);
+        return { status: 200, messages: JSON.parse(JSON.stringify(messages)), chatID: chatID, senderID: senderID };
     }
     catch (e) {
         return { status: 500, message: e.message };
@@ -56,4 +60,14 @@ export const sendMessage = async (chatID, message) => {
     catch (e) {
         return { status: 500, message: e.message };
     }
+};
+
+export const sendMessageForm = async (currentState, formData) => {
+    let msg = formData.get("msg");
+    let chatID = formData.get("chatID");
+    let senderID = jwt.verify(cookies().get("userToken")?.value, jwt_secret).id;
+    let message = { sender: senderID, message: msg };
+    let res = await sendMessage(chatID, message);
+    console.log(res);
+    return { status: 200, message: "Message sent" };
 };

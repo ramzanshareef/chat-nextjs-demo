@@ -7,7 +7,7 @@ import { useFormStatus } from "react-dom";
 
 export function SubmitButton({ title, size }) {
     const { pending } = useFormStatus();
-    // const pathname = usePathname();
+    // const pathname = usePathname
 
     return (
         <>
@@ -23,7 +23,7 @@ export function SubmitButton({ title, size }) {
                 >
                     {title}
                 </p>
-                <div className={` ${pending === true ? "flex justify-center items-center" : "hidden"}  `}>
+                <div className={`"w-fit" ${pending === true ? "flex justify-center items-center" : "hidden"}  `}>
                     <p className="mr-2">
                         Please wait...
                     </p>
