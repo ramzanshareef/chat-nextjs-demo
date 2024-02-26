@@ -3,16 +3,23 @@
 import { cookies } from "next/headers";
 import connectDB from "../connectDB";
 import Chat from "@/models/Chat";
-import { revalidatePath } from "next/cache";
+import { unstable_noStore } from "next/cache";
 
 const jwt = require("jsonwebtoken");
 const jwt_secret = process.env.JWT_SECRET;
 
-// const Pusher = require("pusher");
+const Pusher = require("pusher");
 
-
+const pusher = new Pusher({
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+    secret: process.env.PUSHER_SECRET,
+    cluster: process.env.PUSHER_CLUSTER,
+    useTLS: true
+});
 
 export const fetchChat = async (recieverID) => {
+    unstable_noStore();
     let token = cookies().get("userToken")?.value;
     if (!token) {
         return { status: 401, message: "Unauthorized" };
@@ -31,7 +38,6 @@ export const fetchChat = async (recieverID) => {
         }
         let messages = await Chat.findById(exisChat.id).select("messages");
         let chatID = await exisChat.id;
-        revalidatePath(`/chat/${chatID}`);
         return { status: 200, messages: JSON.parse(JSON.stringify(messages)), chatID: chatID, senderID: senderID };
     }
     catch (e) {
@@ -44,17 +50,11 @@ export const sendMessage = async (chatID, message) => {
         await connectDB();
         let chat = await Chat.findById(chatID);
         chat.messages.push(message);
-        // const pusher = new Pusher({
-        //     appId: process.env.PUSHER_APP_ID,
-        //     key: process.env.PUSHER_KEY,
-        //     secret: process.env.PUSHER_SECRET,
-        //     cluster: process.env.PUSHER_CLUSTER,
-        //     useTLS: true
-        // });
-        // pusher.trigger(`chat-${chatID}`, "message", {
-        //     message: "Hello ramzan"
-        // });
-        await chat.save();
+        chat.save().then(() => {
+            pusher.trigger(`chat-${chatID}`, "new-message", {
+                message: message
+            });
+        });
         return { status: 200, message: "Message sent" };
     }
     catch (e) {
@@ -65,9 +65,9 @@ export const sendMessage = async (chatID, message) => {
 export const sendMessageForm = async (currentState, formData) => {
     let msg = formData.get("msg");
     let chatID = formData.get("chatID");
+    let socketID = formData.get("socketID");
     let senderID = jwt.verify(cookies().get("userToken")?.value, jwt_secret).id;
     let message = { sender: senderID, message: msg };
-    let res = await sendMessage(chatID, message);
-    console.log(res);
+    await sendMessage(chatID, message, socketID);
     return { status: 200, message: "Message sent" };
 };

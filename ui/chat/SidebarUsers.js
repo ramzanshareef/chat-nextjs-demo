@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 export default function SidebarUsers({ users, presentUser }) {
     const router = useRouter();
 
-
     return (
         <>
             <div className="h-screen w-[25rem] flex flex-col justify-between border border-r-blue-300">
@@ -24,7 +23,8 @@ export default function SidebarUsers({ users, presentUser }) {
                             <li key={index} className="bg-blue-400 p-2 w-4/5 mx-auto block hover:bg-blue-500 hover:cursor-pointer text-white"
                                 id={user._id}
                                 onClick={() => {
-                                    router.push(`/chat/${user._id}`);
+                                    document.cookie = `chatWith=${user._id}`;
+                                    router.replace(`/chat/${user._id}`);
                                 }}
                             >
                                 {user.name}

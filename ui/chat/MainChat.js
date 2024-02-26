@@ -10,7 +10,7 @@ export default async function MainChat(params) {
             </>
         );
     }
-    else{
+    else {
         return (
             <>
                 <ChatBox userID={params.userID} messages={res.messages} logUser={res.senderID} chatID={JSON.parse(JSON.stringify(res.chatID))} />
