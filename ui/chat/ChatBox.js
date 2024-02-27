@@ -12,14 +12,15 @@ const pusher = new pusherJs(process.env.NEXT_PUBLIC_PUSHER_KEY, {
 const ChatBox = ({ chatID, logUser }) => {
     const [state, sendMsg] = useFormState(sendMessageForm, null);
     const effectRan = useRef(false);
-    const [umessages, setuMessages] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [chatName, setChatName] = useState("");
 
     useEffect(() => {
         if (effectRan.current === true) return;
         else {
             const channel = pusher.subscribe(`chat-${chatID}`);
             channel.bind("new-message", (data) => {
-                setuMessages((prev) => [...prev, data.message]);
+                setMessages((prev) => [...prev, data.message]);
             });
             effectRan.current = true;
         }
@@ -38,11 +39,10 @@ const ChatBox = ({ chatID, logUser }) => {
 
     useEffect(() => {
         const getMessage = async () => {
-            let res = await fetchChat(
-                document.cookie.split(";").find((c) => c.includes("chatWith")).split("=")[1]
-            );
+            let res = await fetchChat(chatID);
             if (res.status === 200) {
-                setuMessages(res.messages.messages);
+                setMessages(res.messages.messages);
+                setChatName(res.chatName);
             }
         };
         getMessage();
@@ -51,32 +51,29 @@ const ChatBox = ({ chatID, logUser }) => {
     useEffect(() => {
         const chatBox = document.querySelector(".messages");
         chatBox.scrollTop = chatBox.scrollHeight;
-    }, [umessages]); // to scroll chat box to bottom
+    }, [messages]); // to scroll chat box to bottom
 
     return (
         <>
-            <div className="w-full">
-                <div className="messages h-[90vh] p-6 overflow-x-auto">
-                    {
-                        umessages?.length === 0 &&
-                        <div className="text-center">
-                            <h1 className="text-2xl font-bold">No messages yet</h1>
-                        </div>
-                    }
-                    {umessages?.map((message, index) => {
+            <div className="w-full my-0">
+                <div className="p-2 overflow-y-hidden bg-gray-200 border-b border-gray-600">
+                    <h1 className="text-gray-900 text-2xl"> {chatName} </h1>
+                </div>
+                <div className="messages p-6 h-[87vh] overflow-x-auto bg-gray-200 flex flex-col space-y-1">
+                    {messages?.map((message, index) => {
                         return (
                             <div key={index}>
-                                <div id={
-                                    index
-                                } className={message.sender === logUser ? "text-right" : "hidden"}>
-                                    <div className="message-box inline-block bg-blue-500 p-2 my-2 rounded-lg text-white">
+                                <div
+                                    id={index}
+                                    className={message.sender === logUser ? "text-right" : "hidden"}>
+                                    <div className="message-box inline-block bg-indigo-500 p-2 rounded-xl text-white max-w-[50%]  text-wrap overflow-x-auto">
                                         <p >{message.message}</p>
                                     </div>
                                 </div>
-                                <div id={
-                                    index
-                                } className={message.sender !== logUser ? "text-left" : "hidden"}>
-                                    <div className="message-box inline-block bg-purple-500 p-2 my-2 rounded-lg text-white">
+                                <div
+                                    id={index}
+                                    className={message.sender !== logUser ? "text-left" : "hidden"}>
+                                    <div className="message-box inline-block bg-white text-black p-2 my-2 rounded-xl max-w-[50%]  text-wrap overflow-x-auto">
                                         <p>{message.message}</p>
                                     </div>
                                 </div>
@@ -85,23 +82,22 @@ const ChatBox = ({ chatID, logUser }) => {
                     })}
                 </div>
 
-                <div className="p-2">
-                    <form action={sendMsg} id="msgSend">
+                <div className="">
+                    <form action={sendMsg} id="msgSend" className="flex flex-row justify-between space-x-2 sticky bottom-0 p-2 pb-0 mb-0">
                         <input type="text" name="msg"
-                            className="w-11/12 h-10 border-2 border-gray-300 rounded-lg px-2 "
+                            className="w-11/12 h-10 border-2 border-gray-300 rounded-lg px-2"
                             placeholder="Type your message here"
                         />
                         <input type="hidden" name="chatID"
                             value={chatID}
+                            className="hidden"
                         />
                         <button
                             type="submit"
-                            className="w-1/12 px-2 py-1 h-10 bg-blue-500 text-white rounded-lg">Send</button>
+                            className="w-1/12 px-2 py-1 h-10 bg-indigo-500 text-white rounded-lg">Send</button>
                     </form>
                 </div>
             </div>
-
-
         </>
     );
 };
