@@ -24,7 +24,7 @@ const ChatBox = ({ chatID, logUser }) => {
             });
             effectRan.current = true;
         }
-    }, []); // to bind pusher event
+    }); // to bind pusher event
 
     useEffect(() => {
         if (state?.status) {
