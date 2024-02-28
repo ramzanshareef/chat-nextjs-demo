@@ -55,25 +55,25 @@ const ChatBox = ({ chatID, logUser }) => {
 
     return (
         <>
-            <div className="w-full my-0">
-                <div className="p-2 overflow-y-hidden bg-gray-200 border-b border-gray-600">
+            <div className="border border-gray-200 bg-gray-200 rounded-md overflow-auto">
+                <div className="p-2 border-b border-gray-600">
                     <h1 className="text-gray-900 text-2xl"> {chatName} </h1>
                 </div>
-                <div className="messages p-6 h-[87vh] overflow-x-auto bg-gray-200 flex flex-col space-y-1">
+                <div className="messages p-6 h-[86vh] md:h-[84vh] overflow-auto my-2 flex flex-col space-y-1">
                     {messages?.map((message, index) => {
                         return (
                             <div key={index}>
                                 <div
                                     id={index}
                                     className={message.sender === logUser ? "text-right" : "hidden"}>
-                                    <div className="message-box inline-block bg-indigo-500 p-2 rounded-xl text-white max-w-[50%]  text-wrap overflow-x-auto">
+                                    <div className="message-box inline-block bg-indigo-500 p-2 rounded-lg text-white max-w-[50%] text-wrap overflow-x-auto">
                                         <p >{message.message}</p>
                                     </div>
                                 </div>
                                 <div
                                     id={index}
                                     className={message.sender !== logUser ? "text-left" : "hidden"}>
-                                    <div className="message-box inline-block bg-white text-black p-2 my-2 rounded-xl max-w-[50%]  text-wrap overflow-x-auto">
+                                    <div className="message-box inline-block bg-white text-black p-2 my-2 rounded-lg max-w-[50%] text-wrap overflow-x-auto">
                                         <p>{message.message}</p>
                                     </div>
                                 </div>
@@ -82,10 +82,10 @@ const ChatBox = ({ chatID, logUser }) => {
                     })}
                 </div>
 
-                <div className="">
-                    <form action={sendMsg} id="msgSend" className="flex flex-row justify-between space-x-2 sticky bottom-0 p-2 pb-0 mb-0">
+                <div className="border-t border-t-gray-600">
+                    <form action={sendMsg} id="msgSend" className="flex flex-row justify-between space-x-2 sticky bottom-0 p-2 mb-0">
                         <input type="text" name="msg"
-                            className="w-11/12 h-10 border-2 border-gray-300 rounded-lg px-2"
+                            className=" max-md:w-full md:w-11/12 h-10 border-2 border-gray-300 rounded-lg px-2"
                             placeholder="Type your message here"
                         />
                         <input type="hidden" name="chatID"
@@ -94,7 +94,7 @@ const ChatBox = ({ chatID, logUser }) => {
                         />
                         <button
                             type="submit"
-                            className="w-1/12 px-2 py-1 h-10 bg-indigo-500 text-white rounded-lg">Send</button>
+                            className="md:w-1/12 px-2 py-1 h-10 bg-indigo-500 text-white rounded-lg">Send</button>
                     </form>
                 </div>
             </div>

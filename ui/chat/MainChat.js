@@ -22,7 +22,11 @@ export default async function MainChat(params) {
     else {
         return (
             <>
-                <ChatBox chatID={params.chatID} logUser={logUser} />
+                <div
+                    className="w-4/5 max-md:ml-14 md:mx-auto max-md:text-sm"
+                >
+                    <ChatBox chatID={params.chatID} logUser={logUser} />
+                </div>
             </>
         );
     }

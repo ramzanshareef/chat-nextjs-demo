@@ -1,6 +1,6 @@
 const ChatBoxSkeleton = () => {
     return (
-        <div className="w-full">
+        <div className="w-4/5 mx-auto">
             <div className="p-2 overflow-y-hidden bg-gray-200 border-b border-gray-600">
                 <h1 className="text-gray-900 text-2xl">
                     ...
