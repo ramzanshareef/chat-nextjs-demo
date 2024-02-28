@@ -46,7 +46,7 @@ const ChatBox = ({ chatID, logUser }) => {
             }
         };
         getMessage();
-    }, []); // to fetch messages
+    }, [state]); // to fetch messages
 
     useEffect(() => {
         const chatBox = document.querySelector(".messages");
