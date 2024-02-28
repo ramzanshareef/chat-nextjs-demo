@@ -12,7 +12,7 @@ const getUser = async () => {
         return { users: [], presentUser: {} };
     }
     const presentUser = jwt.verify(token, jwt_secret);
-    let users = await User.find();
+    let users = await User.find({});
     let chats = await Chat.find({}).populate({
         "path": "users",
         "select": "-password"
