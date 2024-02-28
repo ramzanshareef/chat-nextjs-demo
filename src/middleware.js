@@ -5,7 +5,6 @@ export async function middleware(request) {
     const regex = /^\/(chats|chat\/\w+)?$/;
 
     const authRoutes = ["/login", "/signup"];
-    const protectedRoutes = ["/profile"];
 
     if (regex.test(pathname)){
         let token = request.cookies.get("userToken");
