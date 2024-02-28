@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 
 export default function ChatsLayout({ children }) {
     return (
-        <div className="flex flex-row">
-            <ChatsSidebar />
-            {children}
-        </div>
+        <>
+            <div className="flex flex-row">
+                <ChatsSidebar />
+                {children}
+            </div>
+        </>
     );
 }
 
