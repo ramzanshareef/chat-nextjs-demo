@@ -1,7 +1,7 @@
-export default function Homepage() {
+const HomePage = () => {
     return (
-        <div>
-            <h1>Chats Home Page</h1>
-        </div>
+        <div>HomePage</div>
     );
-}
+};
+
+export default HomePage;
