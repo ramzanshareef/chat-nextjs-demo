@@ -1,6 +1,6 @@
 import Homepage from "@/ui/chat/HomePage";
 
-export default async function ChatsHomePage() {
+export default function ChatsHomePage() {
     return (
         <>
             <Homepage />
