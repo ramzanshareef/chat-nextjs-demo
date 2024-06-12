@@ -2,6 +2,7 @@ import User from "@/models/User";
 import SidebarUsers from "./SidebarUsers";
 import { cookies } from "next/headers";
 import Chat from "@/models/Chat";
+import connectDB from "@/actions/connectDB";
 
 const jwt = require("jsonwebtoken");
 const jwt_secret = process.env.JWT_SECRET;
@@ -12,6 +13,7 @@ const getUser = async () => {
         return { users: [], presentUser: {} };
     }
     const presentUser = jwt.verify(token, jwt_secret);
+    await connectDB();
     let users = await User.find({});
     let chats = await Chat.find({}).populate({
         "path": "users",
